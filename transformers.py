@@ -1,4 +1,5 @@
 from sklearn.base import BaseEstimator, TransformerMixin
+import pandas as pd
 
 class TimeTransformer(BaseEstimator, TransformerMixin):
     # transforms Date column into date components to be used in the model
