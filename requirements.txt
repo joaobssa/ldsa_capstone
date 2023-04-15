@@ -4,6 +4,7 @@ notebook==6.4.0         # base
 numpy==1.22.0           # base
 pandas==1.4.2           # base
 scikit-learn==0.24.2    # base
+category_encoders==2.5.1.post0
 scipy==1.6.3            # additional - used by many units
 seaborn==0.11.1         # additional - used by many units
 jupyter-client==6.1.12  # base
@@ -11,5 +12,5 @@ joblib==1.1.0
 requests==2.26.0
 flask==2.0.2
 peewee==3.14.8
-imblearn
-plotly
+imblearn==0.0
+plotly==5.14.1
