@@ -24,15 +24,11 @@ def clean_data(df, drop_cols):
     
     df_clean = df.copy()
 
-    # dropping observation_id column and metropolitan entries
+    # dropping metropolitan entries
 
-    df_clean = df.copy().drop(columns='observation_id')
+    # df_clean = df.copy().drop(columns='observation_id')  -- API includes id
 
     df_clean = df_clean.loc[df_clean["station"]!='metropolitan',:].copy()
-
-    # convert date to datetime
-
-    df_clean["Date"] = pd.to_datetime(df_clean["Date"], infer_datetime_format=True, dayfirst=False)
 
     # deal with unordered categorical columns
 

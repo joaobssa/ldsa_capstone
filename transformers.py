@@ -21,7 +21,12 @@ class TimeTransformer(BaseEstimator, TransformerMixin):
         # always copy!
         X_ = X.copy()
 
+        # convert date to datetime
+        X_["Date"] = pd.to_datetime(X_["Date"], infer_datetime_format=True, dayfirst=False)
+        
+        # creates new dataframe to store dates
         new = pd.DataFrame()
+
         new['day'] = X_['Date'].dt.day
         new['month'] = X_['Date'].dt.month
         new['year'] = X_['Date'].dt.year
