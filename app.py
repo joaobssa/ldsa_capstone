@@ -6,7 +6,7 @@ import pandas as pd
 from flask import Flask, jsonify, request
 from peewee import (
     Model, IntegerField, FloatField,
-    TextField, IntegrityError
+    TextField, IntegrityError, BooleanField
 )
 from playhouse.shortcuts import model_to_dict
 from playhouse.db_url import connect
@@ -20,14 +20,27 @@ from transformers import TimeTransformer, BoolTransformer
 
 # The connect function checks if there is a DATABASE_URL env var.
 # If it exists, it uses it to connect to a remote postgres db.
-# Otherwise, it connects to a local sqlite db stored in predictions.db.
+# Otherwise, it connects to a local sqliåte db stored in predictions.db.
 DB = connect(os.environ.get('DATABASE_URL') or 'sqlite:///predictions.db')
 
 class Prediction(Model):
-    observation_id = IntegerField(unique=True)
-    observation = TextField()
-    proba = FloatField()
-    true_class = IntegerField(null=True)
+    # observation_id = IntegerField(unique=True)
+    # observation = TextField()
+    observation_id: TextField()(unique=True)
+    type: TextField()
+    date: TextField()
+    part_of_a_policing_operation: BooleanField()
+    latitude: FloatField()
+    longitude: FloatField()
+    gender: TextField()
+    age_range: TextField()
+    officer_defined_ethnicity: TextField()
+    legislation: TextField()
+    object_of_search: TextField()
+    station:TextField()
+    proba: FloatField()
+    outcome: BooleanField()
+    true_outcome: BooleanField()
 
     class Meta:
         database = DB
@@ -61,23 +74,61 @@ with open('dtypes.pickle', 'rb') as fh:
 app = Flask(__name__)
 
 
-@app.route('/predict', methods=['POST'])
-def predict():
+@app.route('/should_search', methods=['POST'])
+def should_search():
     # Flask provides a deserialization convenience function called
     # get_json that will work if the mimetype is application/json.
     obs_dict = request.get_json()
-    _id = obs_dict['id']
-    observation = obs_dict['observation']
+    
+    # observation = obs_dict['observation']
+    observation_id_ = obs_dict["observation_id"]
+    type_ = obs_dict["Type"]
+    date_ = obs_dict["Date"]
+    policing_op_ = obs_dict["Part of a policing operation"]
+    lat_ = obs_dict["Latitude"]
+    long_ = obs_dict["Longitude"]
+    gend_ = obs_dict["Gender"]
+    age_range_ = obs_dict["Age range"]
+    officer_def_ethnicity_ = obs_dict["Officer-defined ethnicity"]
+    legislation_ = obs_dict["Legislation"]
+    obj_search_ = obs_dict["Object of search"]
+    station_ = obs_dict["station"]
+
+    observation =   {'observation_id': observation_id_,
+                    'Type': type_,
+                    'Date': date_,
+                    'Part of a policing operation': policing_op_,
+                    'Latitude': lat_,
+                    'Longitude': long_,
+                    'Gender': gend_,
+                    'Age range': age_range_,
+                    'Officer-defined ethnicity': officer_def_ethnicity_,
+                    'Legislation': legislation_,
+                    'Object of search': obj_search_,
+                    'station': station_}
+
     # Now do what we already learned in the notebooks about how to transform
     # a single observation into a dataframe that will work with a pipeline.
     obs = pd.DataFrame([observation], columns=columns).astype(dtypes)
     # Now get ourselves an actual prediction of the positive class.
-    proba = pipeline.predict_proba(obs)[0, 1]
-    response = {'proba': proba}
+    pred_proba = pipeline.predict_proba(obs)[0, 1]
+    pred_outcome = pipeline.predict(obs).astype(bool)
+    response = {'outcome': pred_outcome}
     p = Prediction(
-        observation_id=_id,
-        proba=proba,
-        observation=request.data
+        observation_id = observation_id_,
+        type = type_,
+        date= date_,
+        part_of_a_policing_operation = policing_op_,
+        latitude = lat_,
+        longitude = long_,
+        gender = gend_,
+        age_range = age_range_,
+        officer_defined_ethnicity = officer_def_ethnicity_,
+        legislation = legislation_,
+        object_of_search = obj_search_,
+        station = station_,
+        proba = pred_proba,
+        outcome = pred_outcome
     )
     try:
         p.save()
@@ -89,8 +140,8 @@ def predict():
     return jsonify(response)
 
 
-@app.route('/update', methods=['POST'])
-def update():
+@app.route('/search_result', methods=['POST'])
+def search_result():
     obs = request.get_json()
     try:
         p = Prediction.get(Prediction.observation_id == obs['id'])
@@ -114,4 +165,3 @@ def list_db_contents():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True, port=5000)
-    #app.run(host='ldsacapstone-production.up.railway.app', debug=True, port=5000)
