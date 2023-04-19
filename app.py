@@ -80,19 +80,123 @@ def should_search():
     # get_json that will work if the mimetype is application/json.
     obs_dict = request.get_json()
     
-    # observation = obs_dict['observation']
-    observation_id_ = obs_dict["observation_id"]
-    type_ = obs_dict["Type"]
-    date_ = obs_dict["Date"]
-    policing_op_ = obs_dict["Part of a policing operation"]
-    lat_ = obs_dict["Latitude"]
-    long_ = obs_dict["Longitude"]
-    gend_ = obs_dict["Gender"]
-    age_range_ = obs_dict["Age range"]
-    officer_def_ethnicity_ = obs_dict["Officer-defined ethnicity"]
-    legislation_ = obs_dict["Legislation"]
-    obj_search_ = obs_dict["Object of search"]
-    station_ = obs_dict["station"]
+    ################################################################################################################################################################################################
+
+    try:
+        observation_id_ = obs_dict["observation_id"]
+    except:
+        response = {
+                "observation_id": None,
+                "error": "No observation_id field in the request"
+            }
+        return response
+    
+    try:
+        type_ = obs_dict["Type"]
+    except:
+        response = {
+                "type": None,
+                "error": "Type field is missing from request"
+            }
+        return response
+    
+    try:
+        date_ = obs_dict["Date"]
+    except:
+        response = {
+                "Date": None,
+                "error": "Date field is missing from request"
+            }
+        return response
+
+    try:
+        policing_op_ = obs_dict["Part of a policing operation"]
+    except:
+        response = {
+                "Part of a policing operation": None,
+                "error": "Part of a policing operation field is missing from request"
+            }
+        return response
+    
+    try:
+        lat_ = obs_dict["Latitude"]
+    except:
+        response = {
+                "Latitude": None,
+                "error": "Type field is missing from request"
+            }
+        return response
+    
+
+    try:
+        long_ = obs_dict["Longitude"]
+    except:
+        response = {
+                "Longitude": None,
+                "error": "Type field is missing from request"
+            }
+        return response
+    
+
+    try:
+        gend_ = obs_dict["Gender"]
+    except:
+        response = {
+                "Gender": None,
+                "error": "Type field is missing from request"
+            }
+        return response
+    
+
+    try:
+        age_range_ = obs_dict["Age range"]
+    except:
+        response = {
+                "Age range": None,
+                "error": "Type field is missing from request"
+            }
+        return response
+    
+
+    try:
+        officer_def_ethnicity_ = obs_dict["Officer-defined ethnicity"]
+    except:
+        response = {
+                "Officer-defined ethnicity": None,
+                "error": "Officer-defined ethnicity field is missing from request"
+            }
+        return response
+    
+
+    try:
+        legislation_ = obs_dict["Legislation"]
+    except:
+        response = {
+                "Legislation": None,
+                "error": "Legislation field is missing from request"
+            }
+        return response
+    
+
+    try:
+        obj_search_ = obs_dict["Object of search"]
+    except:
+        response = {
+                "Object of search": None,
+                "error": "Object of search field is missing from request"
+            }
+        return response
+    
+
+    try:
+        station_ = obs_dict["station"]
+    except:
+        response = {
+                "station": None,
+                "error": "station field is missing from request"
+            }
+        return response
+    
 
     observation =   {'observation_id': observation_id_,
                     'Type': type_,
@@ -106,6 +210,9 @@ def should_search():
                     'Legislation': legislation_,
                     'Object of search': obj_search_,
                     'station': station_}
+    
+
+    ################################################################################################################################################################################################
 
     # Now do what we already learned in the notebooks about how to transform
     # a single observation into a dataframe that will work with a pipeline.
