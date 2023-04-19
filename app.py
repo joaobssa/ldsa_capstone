@@ -26,7 +26,7 @@ DB = connect(os.environ.get('DATABASE_URL') or 'sqlite:///predictions.db')
 class Prediction(Model):
     # observation_id = IntegerField(unique=True)
     # observation = TextField()
-    observation_id = TextField()(unique=True)
+    observation_id = TextField(unique=True)
     type = TextField()
     date = TextField()
     part_of_a_policing_operation = BooleanField()
@@ -39,8 +39,8 @@ class Prediction(Model):
     object_of_search = TextField()
     station = TextField()
     proba = FloatField()
-    outcome = BooleanField()
-    true_outcome = BooleanField()
+    outcome = BooleanField(null=True)
+    true_outcome = BooleanField(null=True)
 
     class Meta:
         database = DB
