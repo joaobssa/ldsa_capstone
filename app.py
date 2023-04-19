@@ -144,13 +144,18 @@ def should_search():
 def search_result():
     obs = request.get_json()
     try:
-        p = Prediction.get(Prediction.observation_id == obs['id'])
-        p.true_class = obs['true_class']
+        p = Prediction.get(Prediction.observation_id == obs['observation_id'])
+        p.true_class = obs['outcome']
         p.save()
         return jsonify(model_to_dict(p))
     except Prediction.DoesNotExist:
-        error_msg = 'Observation ID: "{}" does not exist'.format(obs['id'])
+        error_msg = 'Observation ID: "{}" does not exist'.format(obs['observation_id'])
         return jsonify({'error': error_msg})
+    
+    response = { "observation_id": p.observation_id,
+                "outcome": p.true_outcome,
+                "predicted_outcome": p.outcome}
+    return jsonify(response)
 
 
 @app.route('/list-db-contents')
