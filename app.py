@@ -113,7 +113,7 @@ def should_search():
     # Now get ourselves an actual prediction of the positive class.
     pred_proba = pipeline.predict_proba(obs)[0, 1]
     pred_outcome = pipeline.predict(obs).astype(bool)
-    response = {'outcome': pred_outcome}
+    response = {'outcome': str(pred_outcome)}
     p = Prediction(
         observation_id = observation_id_,
         type = type_,
@@ -149,8 +149,8 @@ def search_result():
         p.save()
 
         response = { "observation_id": p.observation_id,
-                "outcome": p.true_outcome,
-                "predicted_outcome": p.outcome}
+                "outcome": str(p.true_outcome),
+                "predicted_outcome": str(p.outcome)}
 
         # return jsonify(model_to_dict(p))
         return jsonify(response)
