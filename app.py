@@ -15,6 +15,10 @@ from playhouse.db_url import connect
 
 from transformers import TimeTransformer, BoolTransformer
 
+# import aux functions
+
+from aux_functions import attempt_predict
+
 ########################################
 # Begin database stuff
 
@@ -80,137 +84,10 @@ def should_search():
     # get_json that will work if the mimetype is application/json.
     obs_dict = request.get_json()
     
-    ################################################################################################################################################################################################
+    observation, check =   attempt_predict(obs_dict)
 
-    try:
-        observation_id_ = obs_dict["observation_id"]
-    except:
-        response = {
-                "observation_id": None,
-                "error": "No observation_id field in the request"
-            }
-        return response
-    
-    try:
-        type_ = obs_dict["Type"]
-    except:
-        response = {
-                "type": None,
-                "error": "Type field is missing from request"
-            }
-        return response
-    
-    try:
-        date_ = obs_dict["Date"]
-    except:
-        response = {
-                "Date": None,
-                "error": "Date field is missing from request"
-            }
-        return response
-
-    try:
-        policing_op_ = obs_dict["Part of a policing operation"]
-    except:
-        response = {
-                "Part of a policing operation": None,
-                "error": "Part of a policing operation field is missing from request"
-            }
-        return response
-    
-    try:
-        lat_ = obs_dict["Latitude"]
-    except:
-        response = {
-                "Latitude": None,
-                "error": "Type field is missing from request"
-            }
-        return response
-    
-
-    try:
-        long_ = obs_dict["Longitude"]
-    except:
-        response = {
-                "Longitude": None,
-                "error": "Type field is missing from request"
-            }
-        return response
-    
-
-    try:
-        gend_ = obs_dict["Gender"]
-    except:
-        response = {
-                "Gender": None,
-                "error": "Type field is missing from request"
-            }
-        return response
-    
-
-    try:
-        age_range_ = obs_dict["Age range"]
-    except:
-        response = {
-                "Age range": None,
-                "error": "Type field is missing from request"
-            }
-        return response
-    
-
-    try:
-        officer_def_ethnicity_ = obs_dict["Officer-defined ethnicity"]
-    except:
-        response = {
-                "Officer-defined ethnicity": None,
-                "error": "Officer-defined ethnicity field is missing from request"
-            }
-        return response
-    
-
-    try:
-        legislation_ = obs_dict["Legislation"]
-    except:
-        response = {
-                "Legislation": None,
-                "error": "Legislation field is missing from request"
-            }
-        return response
-    
-
-    try:
-        obj_search_ = obs_dict["Object of search"]
-    except:
-        response = {
-                "Object of search": None,
-                "error": "Object of search field is missing from request"
-            }
-        return response
-    
-
-    try:
-        station_ = obs_dict["station"]
-    except:
-        response = {
-                "station": None,
-                "error": "station field is missing from request"
-            }
-        return response
-    
-
-    observation =   {'observation_id': observation_id_,
-                    'Type': type_,
-                    'Date': date_,
-                    'Part of a policing operation': policing_op_,
-                    'Latitude': lat_,
-                    'Longitude': long_,
-                    'Gender': gend_,
-                    'Age range': age_range_,
-                    'Officer-defined ethnicity': officer_def_ethnicity_,
-                    'Legislation': legislation_,
-                    'Object of search': obj_search_,
-                    'station': station_}
-    
+    if not check:  # IF check is false, then one of the integrity tests didn't succeed
+        return jsonify(observation)
 
     ################################################################################################################################################################################################
 
@@ -222,25 +99,25 @@ def should_search():
     pred_outcome = pipeline.predict(obs).astype(bool)
     response = {'outcome': str(pred_outcome)}
     p = Prediction(
-        observation_id = observation_id_,
-        type = type_,
-        date= date_,
-        part_of_a_policing_operation = policing_op_,
-        latitude = lat_,
-        longitude = long_,
-        gender = gend_,
-        age_range = age_range_,
-        officer_defined_ethnicity = officer_def_ethnicity_,
-        legislation = legislation_,
-        object_of_search = obj_search_,
-        station = station_,
+        observation_id = observation["observation_id"],
+        type = observation["Type"],
+        date= observation["Date"],
+        part_of_a_policing_operation = observation["Part of a policing operation"],
+        latitude = observation["Latitude"],
+        longitude = observation["Longitude"],
+        gender = observation["Gender"],
+        age_range = observation["Age range"],
+        officer_defined_ethnicity = observation["Officer-defined ethnicity"],
+        legislation = observation["Legislation"],
+        object_of_search = observation["Object of search"],
+        station = observation["station"],
         proba = pred_proba,
         outcome = pred_outcome
     )
     try:
         p.save()
     except IntegrityError:
-        error_msg = 'Observation ID: "{}" already exists'.format(observation_id_)
+        error_msg = 'Observation ID: "{}" already exists'.format(observation["observation_id"])
         response['error'] = error_msg
         print(error_msg)
         DB.rollback()
