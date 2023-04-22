@@ -17,7 +17,7 @@ from transformers import TimeTransformer, BoolTransformer
 
 # import aux functions
 
-from aux_functions import attempt_predict
+from app_functions import attempt_predict
 
 ########################################
 # Begin database stuff
