@@ -107,9 +107,9 @@ def attempt_predict(obs_dict):
                 "error": 'Part of a policing operation field is missing from request'
             }
         return response, check
-    if (str(policing_op_) != 'NaN') & (type(policing_op_) != bool):
+    if (str(policing_op_) != 'nan') & (type(policing_op_) != bool):
         response = {
-                "Part of a policing operation": policing_op_,
+                "Part of a policing operation": str(policing_op_),
                 "error": 'Provided "Part of a policing operation" field is not of the correct data type'
             }
         return response, check
