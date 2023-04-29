@@ -33,13 +33,13 @@ class Prediction(Model):
     observation_id = TextField(unique=True)
     type = TextField()
     date = TextField()
-    part_of_a_policing_operation = BooleanField()
-    latitude = FloatField()
-    longitude = FloatField()
+    part_of_a_policing_operation = BooleanField(null=True)
+    latitude = FloatField(null=True)
+    longitude = FloatField(null=True)
     gender = TextField()
     age_range = TextField()
     officer_defined_ethnicity = TextField()
-    legislation = TextField()
+    legislation = TextField(null=True)
     object_of_search = TextField()
     station = TextField()
     proba = FloatField()
@@ -78,7 +78,7 @@ with open('dtypes.pickle', 'rb') as fh:
 app = Flask(__name__)
 
 
-@app.route('/should_search', methods=['POST'])
+@app.route('/should_search/', methods=['POST'])
 def should_search():
     # Flask provides a deserialization convenience function called
     # get_json that will work if the mimetype is application/json.
@@ -124,7 +124,7 @@ def should_search():
     return jsonify(response)
 
 
-@app.route('/search_result', methods=['POST'])
+@app.route('/search_result/', methods=['POST'])
 def search_result():
     obs = request.get_json()
     try:

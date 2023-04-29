@@ -24,9 +24,8 @@ def clean_data(df, drop_cols):
 
     # dropping metropolitan entries
 
-    # df_clean = df.copy().drop(columns='observation_id')  -- API includes id
+    df_clean = df_clean.loc[~df_clean["station"].isin(['metropolitan', 'humberside', 'leicestershire', 'lancashire']),:].copy()
 
-    df_clean = df_clean.loc[df_clean["station"]!='metropolitan',:].copy()
 
     # deal with unordered categorical columns
 
@@ -48,7 +47,6 @@ def clean_data(df, drop_cols):
 
     for col in bool_columns:
         df_clean[col] = df_clean[col].astype('boolean')
-
 
     # generate target columns
     # Note on target: 'A no further action disposal' -> 0 ; not 'A no further action disposal' and 'Outcome linked to object of search' -> 1 
@@ -136,3 +134,62 @@ def show_metrics(kind, y_true, y_pred):
     plt.ylabel('true label')
     plt.title('Confusion Matrix for the ' + kind + ' set')
     plt.show()
+
+
+def verify_success_rate(y_true, y_pred, min_success_rate=0.1):
+    """
+    Verifies the success rate on a test set is above a provided minimum
+    
+    
+    """
+    
+    precision = precision_score(y_true, y_pred, pos_label=True)
+    is_satisfied = (precision >= min_success_rate)
+    
+    return is_satisfied, precision
+
+def verify_no_discrimination(X_test, y_true, y_pred, sensitive_column='Officer-defined ethnicity', max_diff=0.05, min_samples=5):
+    """
+    Verifies that no subdeparment has discrimination in between protected races
+    """
+    
+    departments = X_test['station'].unique()
+    sensitive_classes = X_test[sensitive_column].unique()
+    
+    is_satisfied = True
+    problematic_departments = []
+    good_deparments = []
+    ignored_departments = []
+    for department in departments:
+        precisions = {}
+        for sensitive_class in sensitive_classes:
+
+            mask = (X_test[sensitive_column] == sensitive_class) & (X_test['station'] == department)
+            if np.sum(y_true[mask]) > min_samples:   # the department needs to have at least some positive labels so that it makes sense to measure the precision
+                precisions[sensitive_class] = precision_score(y_true[mask], y_pred[mask], pos_label=1, zero_division=0) # defaults to 0 if the model predicted 0 success outcomes
+                
+        if len(precisions) > 1:
+
+            diff = np.max(list(precisions.values())) - np.min(list(precisions.values()))
+
+            if diff > max_diff:
+                is_satisfied = False
+                problematic_departments.append((department, diff, precisions))
+            else:
+                good_deparments.append((department, diff, precisions))
+        else:
+            print(department + "was ignored")
+            ignored_departments.append((department, None, []))
+    
+    global_precisions = {}
+    for sensitive_class in sensitive_classes:
+        mask = (X_test[sensitive_column] == sensitive_class)
+        if np.sum(y_true[mask]) > min_samples: # the department needs to have at least some positive labels so that precision makes sense
+            global_precisions[sensitive_class] = precision_score(y_true[mask], y_pred[mask], pos_label=1, zero_division=0) # defaults to 0 if the model predicted 0 success outcomes
+    
+    if len(precisions) > 1:    
+        diff = np.max(list(precisions.values())) - np.min(list(precisions.values()))
+        if diff > max_diff:
+            is_satisfied = False
+        
+    return is_satisfied, problematic_departments, good_deparments, global_precisions

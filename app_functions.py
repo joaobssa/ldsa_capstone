@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 def attempt_predict(obs_dict):
 
@@ -106,7 +107,7 @@ def attempt_predict(obs_dict):
                 "error": 'Part of a policing operation field is missing from request'
             }
         return response, check
-    if type(policing_op_) != bool:
+    if (~np.isnan(policing_op_)) & (type(policing_op_) != bool):
         response = {
                 "Part of a policing operation": policing_op_,
                 "error": 'Provided "Part of a policing operation" field is not of the correct data type'
@@ -118,7 +119,7 @@ def attempt_predict(obs_dict):
     except:
         response = {"Latitude": str(None), "error": "Type field is missing from request"}
         return response, check
-    if type(lat_) != float:
+    if (~np.isnan(lat_)) & (type(lat_) != float):
         response = {"Latitude": str(lat_), "error": 'Provided "Latitude" field is not of the correct data type'}
         return response, check
 
@@ -127,7 +128,7 @@ def attempt_predict(obs_dict):
     except:
         response = {"Longitude": str(None), "error": "Type field is missing from request"}
         return response, check
-    if type(long_) != float:
+    if (~np.isnan(long_)) &  (type(long_) != float):
         response = {"Longitude": str(long_),"error": 'Provided "Longitude" field is not of the correct data type'}
         return response, check
 
@@ -184,7 +185,7 @@ def attempt_predict(obs_dict):
     except:
         response = {"Legislation": str(None), "error": "Legislation field is missing from request"}
         return response
-    if type(legislation_) != str:
+    if (~np.isnan(legislation_)) &  (type(legislation_) != str):
         response = {"Legislation": str(legislation_), "error": 'Provided "Legislation" field is not of the correct data type'}
         return response, check
 
