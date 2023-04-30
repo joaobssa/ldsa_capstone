@@ -107,7 +107,7 @@ def attempt_predict(obs_dict):
                 "error": 'Part of a policing operation field is missing from request'
             }
         return response, check
-    if (str(policing_op_) != 'nan') & (type(policing_op_) != bool):
+    if (str(policing_op_) != 'nan') & (str(policing_op_) != 'None') & (type(policing_op_) != bool):
         response = {
                 "Part of a policing operation": str(policing_op_),
                 "error": 'Provided "Part of a policing operation" field is not of the correct data type'
@@ -185,7 +185,7 @@ def attempt_predict(obs_dict):
     except:
         response = {"Legislation": str(None), "error": "Legislation field is missing from request"}
         return response
-    if (legislation_ != None) &  (type(legislation_) != str):
+    if  (str(legislation_).lower() != 'nan') & (str(legislation_).lower() != 'nne') & (legislation_ != None) &  (type(legislation_) != str):
         response = {"Legislation": str(legislation_), "error": 'Provided "Legislation" field is not of the correct data type'}
         return response, check
 

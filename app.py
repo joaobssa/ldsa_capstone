@@ -99,25 +99,25 @@ def should_search():
     pred_outcome = pipeline.predict(obs).astype(bool)
     response = {'outcome': str(pred_outcome)}
     p = Prediction(
-        observation_id = observation["observation_id"],
-        type = observation["Type"],
-        date= observation["Date"],
-        part_of_a_policing_operation = observation["Part of a policing operation"],
-        latitude = observation["Latitude"],
-        longitude = observation["Longitude"],
-        gender = observation["Gender"],
-        age_range = observation["Age range"],
-        officer_defined_ethnicity = observation["Officer-defined ethnicity"],
-        legislation = observation["Legislation"],
-        object_of_search = observation["Object of search"],
-        station = observation["station"],
+        observation_id = obs_dict["observation_id"],
+        type = obs_dict["Type"],
+        date = obs_dict["Date"],
+        part_of_a_policing_operation = obs_dict["Part of a policing operation"],
+        latitude = obs_dict["Latitude"],
+        longitude = obs_dict["Longitude"],
+        gender = obs_dict["Gender"],
+        age_range = obs_dict["Age range"],
+        officer_defined_ethnicity = obs_dict["Officer-defined ethnicity"],
+        legislation = obs_dict["Legislation"],
+        object_of_search = obs_dict["Object of search"],
+        station = obs_dict["station"],
         proba = pred_proba,
         outcome = pred_outcome
     )
     try:
         p.save()
     except IntegrityError:
-        error_msg = 'Observation ID: "{}" already exists'.format(observation["observation_id"])
+        error_msg = 'Observation ID: "{}" already exists'.format(obs_dict["observation_id"])
         response['error'] = error_msg
         print(error_msg)
         DB.rollback()
