@@ -103,7 +103,7 @@ def should_search():
         observation_id = observation["observation_id"],
         type = observation["Type"],
         date = observation["Date"],
-        part_of_a_policing_operation = police_op,
+        part_of_a_policing_operation = observation["Part of a policing operation"],
         latitude = observation["Latitude"],
         longitude = observation["Longitude"],
         gender = observation["Gender"],
