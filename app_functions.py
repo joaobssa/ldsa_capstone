@@ -185,7 +185,7 @@ def attempt_predict(obs_dict):
     except:
         response = {"Legislation": str(None), "error": "Legislation field is missing from request"}
         return response
-    if  (str(legislation_).lower() != 'nan') & (str(legislation_).lower() != 'nne') & (legislation_ != None) &  (type(legislation_) != str):
+    if  (str(legislation_).lower() != 'nan') & (str(legislation_).lower() != 'none') & (legislation_ != None) &  (type(legislation_) != str):
         response = {"Legislation": str(legislation_), "error": 'Provided "Legislation" field is not of the correct data type'}
         return response, check
 
