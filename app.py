@@ -99,25 +99,19 @@ def should_search():
     pred_outcome = pipeline.predict(obs).astype(bool)
     response = {'outcome': str(pred_outcome)}
 
-    # Handle Part of a policing operation
-    if str(obs_dict["Part of a policing operation"]).lower() == 'true':
-        police_op = True
-    else:
-        police_op = False
-
     p = Prediction(
-        observation_id = obs["observation_id"],
-        type = obs["Type"],
-        date = obs["Date"],
+        observation_id = observation["observation_id"],
+        type = observation["Type"],
+        date = observation["Date"],
         part_of_a_policing_operation = police_op,
-        latitude = obs["Latitude"],
-        longitude = obs["Longitude"],
-        gender = obs["Gender"],
-        age_range = obs["Age range"],
-        officer_defined_ethnicity = obs["Officer-defined ethnicity"],
-        legislation = obs["Legislation"],
-        object_of_search = obs["Object of search"],
-        station = obs["station"],
+        latitude = observation["Latitude"],
+        longitude = observation["Longitude"],
+        gender = observation["Gender"],
+        age_range = observation["Age range"],
+        officer_defined_ethnicity = observation["Officer-defined ethnicity"],
+        legislation = observation["Legislation"],
+        object_of_search = observation["Object of search"],
+        station = observation["station"],
         proba = pred_proba,
         outcome = pred_outcome
     )

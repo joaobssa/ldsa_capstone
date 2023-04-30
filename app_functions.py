@@ -209,10 +209,16 @@ def attempt_predict(obs_dict):
 
     check = True # all checks were passed
 
+    # Handle Part of a policing operation
+    if str(policing_op_).lower() == 'true':
+        police_op = True
+    else:
+        police_op = False
+
     observation =   {'observation_id': observation_id_,
                     'Type': type_,
                     'Date': date_,
-                    'Part of a policing operation': policing_op_,
+                    'Part of a policing operation': police_op,
                     'Latitude': lat_,
                     'Longitude': long_,
                     'Gender': gend_,
