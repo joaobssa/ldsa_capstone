@@ -1,4 +1,5 @@
 from sklearn.base import BaseEstimator, TransformerMixin
+from imblearn.over_sampling import SMOTE
 import pandas as pd
 
 class TimeTransformer(BaseEstimator, TransformerMixin):
@@ -64,7 +65,7 @@ class TimeTransformer2(BaseEstimator, TransformerMixin):
         #new['day'] = X_['Date'].dt.day
         #new['month'] = X_['Date'].dt.month
         new['quarter'] = X_['Date'].dt.quarter
-        new['year'] = X_['Date'].dt.year
+        #new['year'] = X_['Date'].dt.year
         new['hour'] = X_['Date'].dt.hour
         new['day of the week'] = X_['Date'].dt.weekday
         
@@ -199,6 +200,3 @@ class Group_Ethnicity(BaseEstimator, TransformerMixin):
         # df_impute["Latitude"] = df_impute["Latitude"].fillna()
 
         return X_.copy()
-
-    
-    

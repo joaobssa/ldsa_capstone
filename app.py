@@ -95,8 +95,15 @@ def should_search():
     # a single observation into a dataframe that will work with a pipeline.
     obs = pd.DataFrame([observation], columns=columns).astype(dtypes)
     # Now get ourselves an actual prediction of the positive class.
+
     pred_proba = pipeline.predict_proba(obs)[0, 1]
-    pred_outcome = pipeline.predict(obs).astype(bool)
+
+    # considering threshold of 0.4
+    if pred_proba < 0.4:
+        pred_outcome = True
+    else:
+        pred_outcome = False
+
     response = {'outcome': str(pred_outcome)}
 
     p = Prediction(

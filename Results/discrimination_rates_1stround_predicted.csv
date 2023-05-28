@@ -1,0 +1,8 @@
+,Asian,Asian,Asian,White,White,White,Other,Other,Other,Black,Black,Black,Mixed,Mixed,Mixed,diff,worst tuple,best tuple
+,Male,Female,Other,Male,Female,Other,Male,Female,Other,Male,Female,Other,Male,Female,Other,,,
+cambridgeshire,0.6739130434782609,,,0.5714285714285714,0.5531914893617021,,,,,0.7,,,,,,0.14681,"('Black', 'Male')","('White', 'Female')"
+city-of-london,0.6781609195402298,,,0.6153846153846154,,,0.40384615384615385,,,0.5533980582524272,,,,,,0.27431,"('Asian', 'Male')","('Other', 'Male')"
+devon-and-cornwall,,,,0.7319587628865979,0.7631578947368421,,,,,0.6,,,,,,0.16315999999999997,"('White', 'Female')","('Black', 'Male')"
+durham,,,,0.20710059171597633,0.26666666666666666,,,,,,,,,,,0.05957000000000001,"('White', 'Female')","('White', 'Male')"
+nottinghamshire,0.7666666666666667,,,0.7089715536105032,0.6,,,,,0.7142857142857143,,,0.66,,,0.16666999999999998,"('Asian', 'Male')","('White', 'Female')"
+bedfordshire,0.7901234567901234,,,0.7088305489260143,0.8133333333333334,,,,,0.8098591549295775,,,,,,0.10450000000000004,"('White', 'Female')","('White', 'Male')"
