@@ -100,9 +100,9 @@ def should_search():
 
     # considering threshold of 0.4
     if pred_proba < 0.4:
-        pred_outcome = True
-    else:
         pred_outcome = False
+    else:
+        pred_outcome = True
 
     response = {'outcome': str(pred_outcome)}
 
