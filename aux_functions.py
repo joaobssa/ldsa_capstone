@@ -12,7 +12,7 @@ from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_sc
 
 def clean_data(df, drop_cols, drop_stations=['metropolitan', 'humberside', 'leicestershire', 'lancashire']):
 
-    # Function to get clean training data with labels
+    """ Function to get clean training data with labels
     
     # Inputs: 
     #     df - original dataframe
@@ -20,6 +20,8 @@ def clean_data(df, drop_cols, drop_stations=['metropolitan', 'humberside', 'leic
     # Ouput:
     #     df_clean - dataframe with cleaned columns
     
+    """
+
     df_clean = df.copy()
 
     # dropping metropolitan entries
@@ -60,6 +62,15 @@ def clean_data(df, drop_cols, drop_stations=['metropolitan', 'humberside', 'leic
     return df_clean
 
 def clean_new_data(df):
+
+    """ Function clean data from the 1st round of requests
+    
+    # Inputs: 
+    #     df - original dataframe
+    # Ouput:
+    #     df_clean - dataframe with cleaned features
+    
+    """
     
     df_clean = df.copy()
     
@@ -102,7 +113,8 @@ def clean_new_data(df):
     return df_clean
 
 def plot_roc_curve(y_test, y_hat):
-    # Function to plot ROC Curve
+    
+    """ Function to plot ROC Curve
     
     # Inputs: 
     #     y_test - true labels for the test set
@@ -110,7 +122,7 @@ def plot_roc_curve(y_test, y_hat):
     # Outputs:
     #     ROC Curve graph
 
-
+    """
 
     fpr, tpr, thresholds = roc_curve(y_true=y_test, y_score=y_hat[:,1])
 
@@ -135,7 +147,7 @@ def plot_roc_curve(y_test, y_hat):
 
 def show_metrics(kind, y_true, y_pred):
 
-    # Function to show all relevant ML metrics
+    """ Function to show all relevant ML metrics
     
     # Inputs: 
     #     kind - data set being measured (train or test)
@@ -143,6 +155,8 @@ def show_metrics(kind, y_true, y_pred):
     #     y_pred - predicted labels
     # Outputs:
     #     Bar graphs with major metrics and Confusion Matrix
+
+    """
 
     accuracy = round(accuracy_score(y_true=y_true, y_pred=y_pred), 3)
     # precision
@@ -178,10 +192,19 @@ def show_metrics(kind, y_true, y_pred):
 
 
 def verify_success_rate(y_true, y_pred, min_success_rate=0.8):
+    
     """
     Verifies the success rate on a test set is above a provided minimum
     
     We shall consider success for this project as the model having at least 0.8 recall
+
+    # Inputs: 
+    #     y_true - vector with the true outcomes
+    #     y_pred - vector with predictions
+    #     min_success_rate - minimum recall value to meet the client's requirement
+    # Outputs:
+    #     is_satisfied - boolean indicating whether requirement was fulfilled
+    #     recall - calculated recall value
     
     """
     
@@ -191,8 +214,24 @@ def verify_success_rate(y_true, y_pred, min_success_rate=0.8):
     return is_satisfied, recall
 
 def verify_no_discrimination(X_test, y_true, y_pred, sensitive_column='Officer-defined ethnicity', max_diff=0.05, min_samples=5):
+    
     """
-    Verifies that no subdeparment has discrimination in between protected races
+    Verifies the success rate on a test set is above a provided minimum
+    
+    We shall consider success for this project as the model having a difference of 0.05 precision between classes
+
+    # Inputs: 
+    #     X_test - Matrix with the test features
+    #     y_true - vector with the true outcomes
+    #     y_pred - vector with predictions
+    #     sensitive_column - feature for which we are testing the discrimination threshold
+    #     max_diff - the precision difference threshold to meet the client's requirement 
+    #     min_samples - minimum number of samples a station needs to have to be included in the test. This is set to ensure results are meaningful
+    # Outputs:
+    #     is_satisfied - boolean indicating whether requirement was fulfilled
+    #     problematic_departments - list of departments where the requirement was not fulfulled
+    #     good_deparments - list of departments that fulfilled the requiremetns
+    #     global_precisions - list of global precision scores for each senstive class
     """
     
     departments = X_test['station'].unique()
@@ -238,7 +277,24 @@ def verify_no_discrimination(X_test, y_true, y_pred, sensitive_column='Officer-d
 
 def verify_no_discrimination_v2(X_test, y_true, y_pred, max_diff=0.05, min_samples=5):
     """
-    Verifies that no subdeparment has discrimination in between protected races
+    Verifies the success rate on a test set is above a provided minimum.
+
+    Updated version of the verify_no_discrimination function, that checks success across a tuple composed of all protected classes instead of for a single class.
+    
+    We shall consider success for this project as the model having a difference of 0.05 precision between classes
+
+    # Inputs: 
+    #     X_test - Matrix with the test features
+    #     y_true - vector with the true outcomes
+    #     y_pred - vector with predictions
+    #     max_diff - the precision difference threshold to meet the client's requirement 
+    #     min_samples - minimum number of samples a station needs to have to be included in the test. This is set to ensure results are meaningful
+    # Outputs:
+    #     is_satisfied - boolean indicating whether requirement was fulfilled
+    #     problematic_departments - list of departments where the requirement was not fulfulled
+    #     good_deparments - list of departments that fulfilled the requiremetns
+    #     global_precisions - list of global precision scores for each senstive class
+    #     all_departments - list of precision for all departments
     """
     
     departments = X_test['station'].unique()
@@ -285,6 +341,28 @@ def verify_no_discrimination_v2(X_test, y_true, y_pred, max_diff=0.05, min_sampl
 
 
 def verify_no_discrimination_v3(X_test, y_true, y_pred, max_diff=0.05, min_samples=30):  
+
+    """
+    Verifies the success rate on a test set is above a provided minimum.
+
+    Updated version of the verify_no_discrimination_v2 function. We have increased the minimum number of samples to include a station in the analysis according
+    to the client's comments. The function now also plots the results for a quick visual comparison.
+    
+    We shall consider success for this project as the model having a difference of 0.05 precision between classes
+
+    # Inputs: 
+    #     X_test - Matrix with the test features
+    #     y_true - vector with the true outcomes
+    #     y_pred - vector with predictions
+    #     max_diff - the precision difference threshold to meet the client's requirement 
+    #     min_samples - minimum number of samples a station needs to have to be included in the test. This is set to ensure results are meaningful
+    # Outputs:
+    #     is_satisfied - boolean indicating whether requirement was fulfilled
+    #     problematic_departments - list of departments where the requirement was not fulfulled
+    #     good_deparments - list of departments that fulfilled the requiremetns
+    #     global_precisions - list of global precision scores for each senstive class
+    #     all_departments - list of precision for all departments
+    """
 
     departments = X_test['station'].unique()
     ethnicity_classes = X_test['Officer-defined ethnicity'].unique()
@@ -334,9 +412,5 @@ def verify_no_discrimination_v3(X_test, y_true, y_pred, max_diff=0.05, min_sampl
     rates["diff"].sort_values().plot.barh()
     plt.title("Highest Precision Difference across stations")
     plt.show();
-
-    # pd.DataFrame(global_precisions, index=["avg difference"]).plot.barh()
-    # plt.title("Difference across stations")
-
 
     return is_satisfied, problematic_departments, good_deparments, global_precisions, all_departments

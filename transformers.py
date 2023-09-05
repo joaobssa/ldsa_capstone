@@ -62,12 +62,15 @@ class TimeTransformer2(BaseEstimator, TransformerMixin):
         # creates new dataframe to store dates
         new = pd.DataFrame()
 
-        #new['day'] = X_['Date'].dt.day
-        #new['month'] = X_['Date'].dt.month
         new['quarter'] = X_['Date'].dt.quarter
-        #new['year'] = X_['Date'].dt.year
         new['hour'] = X_['Date'].dt.hour
         new['day of the week'] = X_['Date'].dt.weekday
+
+        # below are some of the features that we stopped considering after testing 
+
+        #new['day'] = X_['Date'].dt.day
+        #new['month'] = X_['Date'].dt.month
+        #new['year'] = X_['Date'].dt.year
         
         return new
     
@@ -133,6 +136,8 @@ class lat_lon_imputer(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X, y=None):
+        # The transform function uses the avg_lat and avg_lon dicts created while fitting to fill missing values
+
 
         # always copy!
         df_impute = X[["Latitude", "Longitude", "station"]].copy()
@@ -140,8 +145,6 @@ class lat_lon_imputer(BaseEstimator, TransformerMixin):
         for station in self.station_dict:
             df_impute.loc[df_impute["station"]==station, "Latitude"] =  df_impute.loc[df_impute["station"]==station, "Latitude"].fillna(value=self.station_dict[station]['lat'])
             df_impute.loc[df_impute["station"]==station, "Longitude"] =  df_impute.loc[df_impute["station"]==station, "Longitude"].fillna(value=self.station_dict[station]['lon'])
-        
-        # df_impute["Latitude"] = df_impute["Latitude"].fillna()
 
         return df_impute[["Latitude", "Longitude"]].copy()
     
@@ -169,8 +172,6 @@ class Group_Age_Range(BaseEstimator, TransformerMixin):
         X_['Age range'] = X_['Age range'].astype('object')
         X_.loc[(X_['Age range'] == 'under 10') | (X_['Age range'] == '10-17'), 'Age range'] = 'under 17'
         X_['Age range'] = X_['Age range'].astype('category').cat.as_ordered().cat.reorder_categories(['under 17', '18-24', '25-34', 'over 34'], ordered=True)
-        
-        # df_impute["Latitude"] = df_impute["Latitude"].fillna()
 
         return X_.copy()
 
@@ -195,8 +196,5 @@ class Group_Ethnicity(BaseEstimator, TransformerMixin):
         X_ = X.copy()
 
         X_.loc[(X_['Officer-defined ethnicity'] == 'Mixed'), 'Officer-defined ethnicity'] = 'Other'
-
-        
-        # df_impute["Latitude"] = df_impute["Latitude"].fillna()
 
         return X_.copy()

@@ -3,13 +3,15 @@ import numpy as np
 
 def attempt_predict(obs_dict):
 
-    # Function used to protect APP from unwanted inputs
+    """ Function used to protect APP from unwanted inputs
     
-    # Inputs: 
-    #     obs_dict - dictionary containing input data
-    # Outputs:
-    #     observation - dictionary containing approved data
-    #     check - boolean indicating whether all checks were passed
+    Inputs: 
+         obs_dict - dictionary containing input data
+    Outputs:
+         observation - dictionary containing approved data
+         check - boolean indicating whether all checks were passed
+
+    """
 
     valid_columns = {
       "observation_id",
